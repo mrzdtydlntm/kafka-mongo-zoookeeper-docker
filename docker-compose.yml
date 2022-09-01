@@ -1,0 +1,48 @@
+version: '3.6'
+services:
+  kafka:
+    container_name: kafka-container
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://<>:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    image: 'bitnami/kafka:latest'
+    logging:
+      options:
+        max-size: "1m"
+        max-file: "2"
+    networks:
+      - <>-network
+    ports:
+      - '9092:9092'
+
+  mongodb:
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=<>
+      - MONGO_INITDB_ROOT_PASSWORD=<>
+    image: 'mongo:latest'
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb-cache:/data/db
+
+  zookeeper:
+    container_name: zookeeper-container
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    image: 'bitnami/zookeeper:latest'
+    logging:
+      options:
+        max-size: "1m"
+        max-file: "2"
+    networks:
+      - <>-network
+    ports:
+      - '2181:2181'
+networks:
+  <>-network:
+    driver: bridge
+volumes:
+  mongodb-cache:
