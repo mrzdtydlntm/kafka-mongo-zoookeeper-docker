@@ -6,7 +6,8 @@ services:
       - zookeeper
     environment:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://<>:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://<ip-address>:9092
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
       - ALLOW_PLAINTEXT_LISTENER=yes
     image: 'bitnami/kafka:latest'
     logging:
@@ -14,19 +15,21 @@ services:
         max-size: "1m"
         max-file: "2"
     networks:
-      - <>-network
+      - <network-name>-network
     ports:
       - '9092:9092'
 
   mongodb:
+    entrypoint: ["mongod","--config","/etc/mongod.conf"]
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=<>
-      - MONGO_INITDB_ROOT_PASSWORD=<>
+      - MONGO_INITDB_ROOT_USERNAME=<username>
+      - MONGO_INITDB_ROOT_PASSWORD=<password>
     image: 'mongo:latest'
     ports:
       - '27017:27017'
     volumes:
       - mongodb-cache:/data/db
+      - ./mongodb/mongod.conf:/etc/mongod.conf
 
   zookeeper:
     container_name: zookeeper-container
@@ -38,11 +41,11 @@ services:
         max-size: "1m"
         max-file: "2"
     networks:
-      - <>-network
+      - <network-name>-network
     ports:
       - '2181:2181'
 networks:
-  <>-network:
+  <network-name>-network:
     driver: bridge
 volumes:
   mongodb-cache:
