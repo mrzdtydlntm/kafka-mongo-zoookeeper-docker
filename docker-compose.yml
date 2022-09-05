@@ -20,11 +20,13 @@ services:
       - '9092:9092'
 
   mongodb:
-    entrypoint: ["mongod","--config","/etc/mongod.conf"]
+    build: 
+      context: ./mongodb
+    container_name: mongo-container
     environment:
       - MONGO_INITDB_ROOT_USERNAME=<username>
       - MONGO_INITDB_ROOT_PASSWORD=<password>
-    image: 'mongo:latest'
+    image: 'mongodb'
     ports:
       - '27017:27017'
     volumes:
